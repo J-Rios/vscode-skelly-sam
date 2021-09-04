@@ -10,8 +10,6 @@ Options:
 
 # Build Examples
 
-## Project inside ASF
-
 ```bash
 ./makebuild
 ./makebuild HELP
