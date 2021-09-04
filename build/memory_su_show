@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+if [ $# -lt 1 ]; then
+    echo "  You need to provide a stack usage file to analyze."
+    echo "  Example:"
+    echo "    ${0} firmware.su"
+    echo ""
+    exit 1
+fi
+
+echo ""
+echo "Static memory usage:"
+echo ""
+cat $1 | sort -t$'\t' -k2 -g
+
+exit 0

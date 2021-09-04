@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+###############################################################################
+
+make clean
+rm -rf built/
+rm -f config.mk
+rm -f *.su
+
+exit 0

@@ -1,0 +1,146 @@
+
+# Path to current project top directory
+PRJ_PATH = .
+
+# Path to ASF directory
+ASF_PATH = ../../microchip-asf
+
+# Path to current project sources, headers and libs
+APP_SRC_PATH = ../src
+APP_INC_PATH = ../inc
+APP_LIB_PATH = ../lib
+APP_ASF_HAL_PATH = ../asf_hal/samd20
+
+# Path to temporary built files directory
+BUILD_DIR = ./built/vscode-skelly-sam/none
+
+# Target CPU architecture (i.e. cortex-m3, cortex-m4...)
+ARCH = cortex-m0plus
+
+# Target part (i.e. samd20g18, saml21g18...)
+PART = samd20j18
+
+# Application target name (".elf" for application and ".a" for lib)
+TARGET_FLASH = vscode-skelly-sam_flash.elf
+TARGET_SRAM = vscode-skelly-sam_sram.elf
+
+# Project type parameter: all, sram or flash
+PROJECT_TYPE = flash
+
+# Application optimization used during compilation and linking
+# (-O0, -O1, -O2, -O3 or -Os)
+OPTIMIZATION =                                                              \
+    -Os                                                                     \
+    -g                                                                      \
+    -ffunction-sections                                                     \
+    -fdata-sections                                                         \
+    -fno-exceptions
+
+# Additional options for debugging (common Makefile.in will add -g3)
+DBGFLAGS = 
+
+# Path relative to top level directory pointing to a linker script
+GDB_SCRIPTS_PATH = ${ASF_PATH}/sam0/boards/samd20_xplained_pro
+DEBUG_SCRIPT_FLASH = \
+    ${GDB_SCRIPTS_PATH}/debug_scripts/gcc/samd20_xplained_pro_flash.gdb
+DEBUG_SCRIPT_SRAM = \
+    ${GDB_SCRIPTS_PATH}/debug_scripts/gcc/samd20_xplained_pro_sram.gdb
+
+# Path relative to top level directory pointing to a linker script
+LINKER_SCRIPT_FLASH = \
+    ${ASF_PATH}/sam0/utils/linker_scripts/samd20/gcc/samd20g18_flash.ld
+LINKER_SCRIPT_SRAM = \
+    ${ASF_PATH}/sam0/utils/linker_scripts/samd20/gcc/samd20g18_sram.ld
+
+# Extra flags to use when archiving
+ARFLAGS = 
+
+# Extra flags to use when assembling
+ASFLAGS = 
+
+# Extra flags to use when compiling
+CFLAGS =
+
+# Pre- and post-build commands
+PREBUILD_CMD = 
+POSTBUILD_CMD = 
+
+###############################################################################
+
+# Additional search paths for libraries
+LIB_PATH = \
+    ${ASF_PATH}/thirdparty/CMSIS/Lib/GCC                          
+
+# List of libraries to use during linking
+LIBS = \
+    arm_cortexM0l_math
+
+###############################################################################
+
+# List of include paths
+INC_PATH = \
+    ${ASF_PATH}/common/boards                                               \
+    ${ASF_PATH}/common/utils                                                \
+    ${ASF_PATH}/sam0/boards                                                 \
+    ${ASF_PATH}/sam0/boards/samd20_xplained_pro                             \
+    ${ASF_PATH}/sam0/drivers/port                                           \
+    ${ASF_PATH}/sam0/drivers/system                                         \
+    ${ASF_PATH}/sam0/drivers/system/clock                                   \
+    ${ASF_PATH}/sam0/drivers/system/clock/clock_samd20                      \
+    ${ASF_PATH}/sam0/drivers/system/interrupt                               \
+    ${ASF_PATH}/sam0/drivers/system/interrupt/system_interrupt_samd20       \
+    ${ASF_PATH}/sam0/drivers/system/pinmux                                  \
+    ${ASF_PATH}/sam0/drivers/system/power                                   \
+    ${ASF_PATH}/sam0/drivers/system/power/power_sam_d_r_h                   \
+    ${ASF_PATH}/sam0/drivers/system/reset                                   \
+    ${ASF_PATH}/sam0/drivers/system/reset/reset_sam_d_r_h                   \
+    ${ASF_PATH}/sam0/utils                                                  \
+    ${ASF_PATH}/sam0/utils/cmsis/samd20/include                             \
+    ${ASF_PATH}/sam0/utils/cmsis/samd20/source                              \
+    ${ASF_PATH}/sam0/utils/header_files                                     \
+    ${ASF_PATH}/sam0/utils/preprocessor                                     \
+    ${ASF_PATH}/thirdparty/CMSIS/Include                                    \
+    ${ASF_PATH}/thirdparty/CMSIS/Lib/GCC                                    \
+    \
+    ${APP_ASF_HAL_PATH}                                                     \
+    ${APP_INC_PATH}                                                         \
+    ${APP_LIB_PATH}/*/                                                      \
+
+###############################################################################
+
+# List of C source files
+CSRCS = \
+    ${ASF_PATH}/common/utils/interrupt/interrupt_sam_nvic.c                 \
+    ${ASF_PATH}/sam0/boards/samd20_xplained_pro/board_init.c                \
+    ${ASF_PATH}/sam0/drivers/port/port.c                                    \
+    ${ASF_PATH}/sam0/drivers/system/clock/clock_samd20/clock.c              \
+    ${ASF_PATH}/sam0/drivers/system/clock/clock_samd20/gclk.c               \
+    ${ASF_PATH}/sam0/drivers/system/interrupt/system_interrupt.c            \
+    ${ASF_PATH}/sam0/drivers/system/pinmux/pinmux.c                         \
+    ${ASF_PATH}/sam0/drivers/system/system.c                                \
+    ${ASF_PATH}/sam0/utils/cmsis/samd20/source/gcc/startup_samd20.c         \
+    ${ASF_PATH}/sam0/utils/cmsis/samd20/source/system_samd20.c              \
+    ${ASF_PATH}/sam0/utils/syscalls/gcc/syscalls.c                          \
+    \
+    ${APP_SRC_PATH}/main.c                                                  \
+
+###############################################################################
+
+# List of assembler source files
+ASSRCS = 
+
+###############################################################################
+
+# Extra flags to use when preprocessing
+#
+# Preprocessor symbol definitions
+#   To add a definition use the format "-D name[=definition]"
+#   To cancel a definition use the format "-U name"
+#
+# The most relevant symbols to define for the preprocessor are:
+#   BOARD      Target board in use, see boards/board.h for a list
+#   EXT_BOARD  Optional extension board in use, see boards/board.h for a list
+CPPFLAGS = \
+    -D BOARD=SAMD20_XPLAINED_PRO                                            \
+    -D __SAMD20J18__                                                        \
+    -D ARM_MATH_CM0PLUS=true                                                \

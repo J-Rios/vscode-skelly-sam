@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+
+###############################################################################
+
+# Actual script directory path
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+###############################################################################
+
+# Initial variables values
+
+test=0
+bootloader=0
+LINESTOADD=()
+BLINESTOADD=()
+
+###############################################################################
+
+### Compile & Link Flags Options
+
+# Setup to use newlib for system functions
+BLINESTOADD+=('LDFLAGS += -specs=nosys.specs')
+
+# Setup to show RAM & ROM usage
+BLINESTOADD+=('LDFLAGS += -Wl,--print-memory-usage')
+
+# Setup to generate .su (static memory usage) files when compiling C/C++ files
+BLINESTOADD+=('CFLAGS += -fstack-usage')
+BLINESTOADD+=('CXXFLAGS += -fstack-usage')
+BLINESTOADD+=('CPPFLAGS += -fstack-usage')
+
+# Setup to generate .optimized files when compiling C/C++ files
+BLINESTOADD+=('CFLAGS += -fdump-tree-optimized')
+BLINESTOADD+=('CXXFLAGS += -fdump-tree-optimized')
+BLINESTOADD+=('CPPFLAGS += -fdump-tree-optimized')
+
+###############################################################################
+
+### Parse & Get Provided Arguments
+
+# For each argument
+for i in "$@"
+do
+    # Convert it to Uppercases
+    i=`echo "$i" | tr a-z A-Z`
+
+    # Check for expected arguments
+    if [ "$i" == "HELP" ]; then
+        echo ""
+        cat $DIR/README.md
+        echo ""
+        exit 1
+    elif [ "$i" == "TEST" ]; then
+        test=1
+    elif [ "$i" == "BOOTLOADER" ]; then
+        bootloader=1
+    else
+        LINESTOADD+=("${i}")
+    fi
+done
+
+###############################################################################
+
+### Set Build Flags
+
+if [ $test -eq 1 ]; then
+    LINESTOADD+=('TEST')
+fi
+
+if [ $bootloader -eq 1 ]; then
+    LINESTOADD+=('BOOTLOADER')
+    BLINESTOADD+=('LDFLAGS += -Wl,--section-start=.text=0x8000')
+else
+    BLINESTOADD+=('LDFLAGS += -Wl,--section-start=.text=0x0000')
+fi
+
+###############################################################################
+
+# Summary
+
+echo ""
+
+# Show build Defines Macros to be used
+echo "Defines Includes:"
+for i in "${LINESTOADD[@]}"
+do
+    1>&2 echo "    $i"
+done
+echo ""
+
+# Show build linker flags to be used
+echo "Build Flags:"
+for i in "${BLINESTOADD[@]}"
+do
+    1>&2 echo "    $i"
+done
+
+###############################################################################
+
+# Create a new config file to work with it (to keep original without changes)
+cp -a config.mk.orig config.mk
+
+# Add build Defines Macros into Make config file
+for i in "${LINESTOADD[@]}"
+do
+    echo -e "    -D $i "'\\' >> config.mk
+done
+
+echo '' >>./config.mk
+
+# Add linker flags into Make config file
+for i in "${BLINESTOADD[@]}"
+do
+    echo -e "$i" >> config.mk
+done
+
+echo ""
+echo "--------------------------------------------"
+echo ""
+
+###############################################################################
+
+# Launch make
+echo "make clean"
+echo ""
+make clean
+echo ""
+echo "--------------------------------------------"
+echo ""
+echo "make"
+echo ""
+make -j8
+RESULT=$?
+
+# Make success
+if [ $RESULT -eq 0 ]; then
+    # Generate a full static memory usage file
+    rm -f vscode-skelly-sam.su
+    FILES=`find .. -type f \( -iname "*.su" \)`
+    echo "" > vscode-skelly-sam.su
+    for file in $FILES
+    do
+        cat $file >> vscode-skelly-sam.su
+        echo  "" >> vscode-skelly-sam.su
+    done
+    # Shows binary size
+    echo ""
+    $DIR/binary_size vscode-skelly-sam_flash.bin
+fi
+
+echo ""
+echo ""
+exit $RESULT
