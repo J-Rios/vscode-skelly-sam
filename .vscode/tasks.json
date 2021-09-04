@@ -1,0 +1,45 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build all",
+            "group": "build",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "command": "./makebuild",
+            "args": ["TEST"]
+        },
+        {
+            "label": "Build clean",
+            "group": "build",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "command": "./makeclean",
+            "args": []
+        },
+        {
+            "label": "Flash all",
+            "group": "build",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "command": "edbg",
+            "args": ["-bepv", "-tsamd20", "-fvscode-skelly-sam_flash.bin"]
+        },
+        {
+            "label": "Flash app",
+            "group": "build",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceRoot}/build"
+            },
+            "command": "edbg",
+            "args": ["-bepv", "-tsamd20", "-o32768", "-fvscode-skelly-sam_flash.bin"]
+        }
+    ]
+}
