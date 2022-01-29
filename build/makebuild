@@ -2,6 +2,10 @@
 
 ###############################################################################
 
+# Specify project name
+PROJECTNAME="samproject"
+PRJ="fw_app_${PROJECTNAME}"
+
 # Actual script directory path
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
@@ -98,7 +102,10 @@ done
 ###############################################################################
 
 # Create a new config file to work with it (to keep original without changes)
-cp -a config.mk.orig config.mk
+cp -a ${DIR}/config.mk.orig ${DIR}/config.mk
+
+# Set Project Name in config file
+sed -i "s/^PRJ_NAME = $/PRJ_NAME = ${PRJ}/" ${DIR}/config.mk
 
 # Add build Defines Macros into Make config file
 for i in "${LINESTOADD[@]}"
@@ -138,7 +145,7 @@ if [ $RESULT -eq 0 ]; then
     echo -e "ADDRESS    SIZE    FUNCTION    FILE:LINE\n" > \
             ${DIR}/memory_program.txt
     arm-none-eabi-gcc-nm --line-numbers --print-size --size-sort --radix=d \
-            ${DIR}/vscode-skelly-sam_flash.elf >> ${DIR}/memory_program.txt
+            ${DIR}/${PRJ}_flash.elf >> ${DIR}/memory_program.txt
     # Generate a full Static RAM Memory usage file
     FILES=`find ${DIR} -type f \( -iname "*.su" \)`
     echo "" > ${DIR}/tmp.txt
@@ -162,7 +169,7 @@ if [ $RESULT -eq 0 ]; then
     rm -f ${DIR}/tmp_sort.txt
     # Shows binary size
     echo ""
-    $DIR/binary_size ${DIR}/vscode-skelly-sam_flash.bin
+    $DIR/binary_size ${DIR}/${PRJ}_flash.bin
 fi
 
 echo ""
