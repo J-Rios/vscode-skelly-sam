@@ -11,6 +11,7 @@ make clean
 rm -rf ${DIR}/built/
 rm -f ${DIR}/config.mk
 rm -f ${DIR}/*.su
+rm -f ${DIR}/memory_program.txt
 rm -f ${DIR}/memory_ram.txt
 
 exit 0

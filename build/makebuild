@@ -134,6 +134,11 @@ RESULT=$?
 
 # Make success
 if [ $RESULT -eq 0 ]; then
+    # Generate Program Memory usage file
+    echo -e "ADDRESS    SIZE    FUNCTION    FILE:LINE\n" > \
+            ${DIR}/memory_program.txt
+    arm-none-eabi-gcc-nm --line-numbers --print-size --size-sort --radix=d \
+            ${DIR}/vscode-skelly-sam_flash.elf >> ${DIR}/memory_program.txt
     # Generate a full Static RAM Memory usage file
     FILES=`find ${DIR} -type f \( -iname "*.su" \)`
     echo "" > ${DIR}/tmp.txt
