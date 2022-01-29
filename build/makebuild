@@ -103,15 +103,15 @@ cp -a config.mk.orig config.mk
 # Add build Defines Macros into Make config file
 for i in "${LINESTOADD[@]}"
 do
-    echo -e "    -D $i "'\\' >> config.mk
+    echo -e "    -D $i "'\\' >> ${DIR}/config.mk
 done
 
-echo '' >>./config.mk
+echo '' >> ${DIR}/config.mk
 
 # Add linker flags into Make config file
 for i in "${BLINESTOADD[@]}"
 do
-    echo -e "$i" >> config.mk
+    echo -e "$i" >> ${DIR}/config.mk
 done
 
 echo ""
@@ -134,18 +134,30 @@ RESULT=$?
 
 # Make success
 if [ $RESULT -eq 0 ]; then
-    # Generate a full static memory usage file
-    rm -f vscode-skelly-sam.su
-    FILES=`find .. -type f \( -iname "*.su" \)`
-    echo "" > vscode-skelly-sam.su
+    # Generate a full Static RAM Memory usage file
+    FILES=`find ${DIR} -type f \( -iname "*.su" \)`
+    echo "" > ${DIR}/tmp.txt
     for file in $FILES
     do
-        cat $file >> vscode-skelly-sam.su
-        echo  "" >> vscode-skelly-sam.su
+        cat $file >> ${DIR}/tmp.txt
+        echo  "" >> ${DIR}/tmp.txt
     done
+    # Sort by size and check for Static and Dynamic memory usage
+    echo "" > ${DIR}/memory_ram.txt
+    echo "Static memory usage:" >> ${DIR}/memory_ram.txt
+    echo "" >> ${DIR}/memory_ram.txt
+    grep -v -e '^$' ${DIR}/tmp.txt | sort -t$'\t' -k2 -g > ${DIR}/tmp_sort.txt
+    cat ${DIR}/tmp_sort.txt | grep -v "\tdynamic" >> ${DIR}/memory_ram.txt
+    echo "" >> ${DIR}/memory_ram.txt
+    echo "Dynamic memory usage detected in:" >> ${DIR}/memory_ram.txt
+    echo "" >> ${DIR}/memory_ram.txt
+    cat ${DIR}/tmp_sort.txt | grep -P "\tdynamic" >> ${DIR}/memory_ram.txt
+    echo "" >> ${DIR}/memory_ram.txt
+    rm -f ${DIR}/tmp.txt
+    rm -f ${DIR}/tmp_sort.txt
     # Shows binary size
     echo ""
-    $DIR/binary_size vscode-skelly-sam_flash.bin
+    $DIR/binary_size ${DIR}/vscode-skelly-sam_flash.bin
 fi
 
 echo ""

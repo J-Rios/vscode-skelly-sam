@@ -2,9 +2,15 @@
 
 ###############################################################################
 
+# Actual script directory path
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+###############################################################################
+
 make clean
-rm -rf built/
-rm -f config.mk
-rm -f *.su
+rm -rf ${DIR}/built/
+rm -f ${DIR}/config.mk
+rm -f ${DIR}/*.su
+rm -f ${DIR}/memory_ram.txt
 
 exit 0
